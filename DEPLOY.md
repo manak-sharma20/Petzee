@@ -10,7 +10,7 @@ Follow these steps to deploy your application to production in under 5 minutes.
 2.  **Create Railway Project**:
     - Go to [railway.app](https://railway.app) and click **"New Project"**.
     - Select **"Deploy from GitHub repo"** and choose `Petzee`.
-    - Set the **Root Directory** to `backend`.
+    - **Note**: No need to set the Root Directory; I've added root-level configs to handle this automatically.
 3.  **Add Database**:
     - Click **"Add Service"** → **"Database"** → **"PostgreSQL"**.
     - Railway will automatically provide a `DATABASE_URL`.

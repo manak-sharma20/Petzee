@@ -1,0 +1,10 @@
+{
+  "name": "petzee-root",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npm start --prefix backend",
+    "build": "npm run postinstall --prefix backend",
+    "postinstall": "npm install --prefix backend"
+  }
+}
