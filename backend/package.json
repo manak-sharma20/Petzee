@@ -14,7 +14,7 @@
     "test": "jest --detectOpenHandles"
   },
   "dependencies": {
-    "@prisma/client": "^5.7.0",
+    "@prisma/client": "^5.22.0",
     "bcrypt": "^5.1.1",
     "cloudinary": "^1.41.0",
     "cors": "^2.8.5",
@@ -33,7 +33,7 @@
   "devDependencies": {
     "jest": "^29.7.0",
     "nodemon": "^3.0.2",
-    "prisma": "^5.7.0",
+    "prisma": "^5.22.0",
     "supertest": "^6.3.3"
   },
   "jest": {

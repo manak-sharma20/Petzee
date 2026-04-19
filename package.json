@@ -3,8 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "workspaces": [
-    "backend",
-    "frontend"
+    "backend"
   ],
   "scripts": {
     "start": "npm start -w backend",
