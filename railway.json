@@ -4,7 +4,7 @@
     "builder": "Nixpacks"
   },
   "deploy": {
-    "startCommand": "npm start --prefix backend",
+    "startCommand": "npm start -w backend",
     "restartPolicyType": "ON_FAILURE"
   }
 }

@@ -2,8 +2,12 @@
   "name": "petzee-root",
   "private": true,
   "version": "1.0.0",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "scripts": {
-    "start": "npm start --prefix backend",
-    "build": "npm run postinstall --prefix backend"
+    "start": "npm start -w backend",
+    "build": "npm run postinstall -w backend"
   }
 }
