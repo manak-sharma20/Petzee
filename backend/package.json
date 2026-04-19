@@ -1,0 +1,23 @@
+{
+  "name": "petzee-backend",
+  "version": "1.0.0",
+  "description": "Petzee backend API server",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio",
+    "test": "jest --detectOpenHandles"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {}
+  },
+  "keywords": ["petzee", "pets", "nodejs", "express"],
+  "author": "",
+  "license": "ISC"
+}

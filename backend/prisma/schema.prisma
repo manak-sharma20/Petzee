@@ -1,0 +1,237 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  OWNER
+  PROVIDER
+  VET
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum ConsultationStatus {
+  OPEN
+  ACTIVE
+  CLOSED
+}
+
+enum NotificationType {
+  BOOKING_CONFIRMED
+  BOOKING_CANCELLED
+  VACCINATION_REMINDER
+  CONSULTATION_STARTED
+  SYSTEM
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(OWNER)
+  avatarUrl String?
+  phone     String?
+  bio       String?
+  isVerified Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  pets            Pet[]
+  bookingsAsOwner Booking[]       @relation("OwnerBookings")
+  services        Service[]
+  consultationsAsOwner Consultation[] @relation("OwnerConsultations")
+  consultationsAsVet   Consultation[] @relation("VetConsultations")
+  sentMessages    Message[]
+  notifications   Notification[]
+  reviews         Review[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Pet {
+  id        String   @id @default(uuid())
+  ownerId   String
+  name      String
+  species   String
+  breed     String?
+  dob       DateTime?
+  gender    String?
+  photoUrl  String?
+  weight    Float?
+  allergies String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  owner               User                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  vaccinationRecords  VaccinationRecord[]
+  bookings            Booking[]
+  consultations       Consultation[]
+
+  @@index([ownerId])
+}
+
+model VaccinationRecord {
+  id           String    @id @default(uuid())
+  petId        String
+  vaccineName  String
+  givenAt      DateTime
+  nextDueAt    DateTime?
+  documentUrl  String?
+  notes        String?
+  createdAt    DateTime  @default(now())
+
+  // Relations
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@index([petId])
+  @@index([nextDueAt])
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  providerId  String
+  title       String
+  description String?
+  category    String   // grooming, walking, boarding, vet, other
+  price       Float
+  duration    Int?     // in minutes
+  isActive    Boolean  @default(true)
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  provider Provider @relation(fields: [providerId], references: [userId], onDelete: Cascade)
+  bookings Booking[]
+
+  @@index([providerId])
+  @@index([category])
+  @@index([isActive])
+}
+
+model Provider {
+  userId       String   @id
+  businessName String
+  address      String?
+  city         String?
+  rating       Float    @default(0)
+  reviewCount  Int      @default(0)
+  isVerified   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  // Relations
+  services Service[]
+}
+
+model Booking {
+  id          String        @id @default(uuid())
+  ownerId     String
+  serviceId   String
+  petId       String
+  status      BookingStatus @default(PENDING)
+  scheduledAt DateTime
+  notes       String?
+  totalPrice  Float
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  owner   User    @relation("OwnerBookings", fields: [ownerId], references: [id])
+  service Service @relation(fields: [serviceId], references: [id])
+  pet     Pet     @relation(fields: [petId], references: [id])
+  review  Review?
+
+  @@index([ownerId])
+  @@index([serviceId])
+  @@index([status])
+  @@index([scheduledAt])
+}
+
+model Consultation {
+  id        String             @id @default(uuid())
+  ownerId   String
+  vetId     String
+  petId     String
+  status    ConsultationStatus @default(OPEN)
+  topic     String?
+  startedAt DateTime           @default(now())
+  endedAt   DateTime?
+  createdAt DateTime           @default(now())
+
+  // Relations
+  owner    User      @relation("OwnerConsultations", fields: [ownerId], references: [id])
+  vet      User      @relation("VetConsultations", fields: [vetId], references: [id])
+  pet      Pet       @relation(fields: [petId], references: [id])
+  messages Message[]
+
+  @@index([ownerId])
+  @@index([vetId])
+  @@index([status])
+}
+
+model Message {
+  id             String   @id @default(uuid())
+  consultationId String
+  senderId       String
+  content        String
+  createdAt      DateTime @default(now())
+
+  // Relations
+  consultation Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
+  sender       User         @relation(fields: [senderId], references: [id])
+
+  @@index([consultationId])
+  @@index([createdAt])
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  metadata  Json?
+  createdAt DateTime         @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  bookingId String   @unique
+  userId    String
+  rating    Int      // 1-5
+  comment   String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  booking Booking @relation(fields: [bookingId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
