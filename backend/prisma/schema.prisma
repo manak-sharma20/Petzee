@@ -54,7 +54,6 @@ model User {
   // Relations
   pets            Pet[]
   bookingsAsOwner Booking[]       @relation("OwnerBookings")
-  services        Service[]
   consultationsAsOwner Consultation[] @relation("OwnerConsultations")
   consultationsAsVet   Consultation[] @relation("VetConsultations")
   sentMessages    Message[]
